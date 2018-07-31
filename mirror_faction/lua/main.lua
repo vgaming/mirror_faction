@@ -1,12 +1,12 @@
 -- << mirror_main
 
 local wesnoth = wesnoth
+local mirrorfaction = mirrorfaction
 local ipairs = ipairs
 local pairs = pairs
 local table = table
 local helper = wesnoth.require("lua/helper.lua")
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
-
 
 --local side_to_team = {}
 local team_array = {}
@@ -21,13 +21,24 @@ do
 		team_id_array[#team_id_array + 1] = side
 	end
 	for _, team_members in ipairs(team_array) do
-		table.sort(team_members, function(a, b) return a.controller > b.controller end)
+		mirrorfaction.array_sort_by_tuple(team_members, function(e)
+			return { not e.__cfg.allow_player, e.side }
+		end)
 	end
-	table.sort(team_array, function(a, b)
-		return #a ~= #b and #a > #b or not a[1].__cfg.chose_random or b[1].__cfg.chose_random
+	mirrorfaction.array_sort_by_tuple(team_array, function(e)
+		return { -#e, e[1].__cfg.chose_random, e[1].side }
 	end)
+	-- wesnoth.dofile("~add-ons/pick_advance/lua/json_format.lua")
+	-- print_as_json(team_array)
 end
 
+
+function mirrorfaction.leaders_mirror_show_warning()
+	wesnoth.wml_actions.message {
+		message = "Your Faction/Leader (side " .. wesnoth.current.side .. ") was replaced to allow fair game play.",
+		side_for = wesnoth.current.side,
+	}
+end
 
 local function unit_wml_copy(old_id, new_id, overrides)
 	wesnoth.wml_actions.store_unit {
@@ -45,15 +56,7 @@ local function unit_wml_copy(old_id, new_id, overrides)
 	wesnoth.set_variable("temp_unit", nil)
 end
 
-local function stateless_iter(a, i)
-	i = i + 1
-	local v = a[i]
-	if v then
-		return i, v
-	end
-end
-
-for _, team_members in stateless_iter, team_array, 1 do
+for _, team_members in mirrorfaction.stateless_iter, team_array, 1 do
 	for member_index, side in ipairs(team_members) do
 		local rolemodel_side = team_array[1][member_index]
 		local rolemodel_leader = wesnoth.get_units { side = rolemodel_side.side, canrecruit = true }[1]
@@ -66,31 +69,18 @@ for _, team_members in stateless_iter, team_array, 1 do
 				wesnoth.wml_actions.kill { id = old_leader.id, fire_event = false, animate = false }
 				unit_wml_copy(rolemodel_leader.id, new_id , {x = x, y = y, side = side.side, name = name})
 			end
+			if not side.__cfg.chose_random then
+				print("scheduled mirror warning for side " .. side.side, "side " .. side.side .. " turn 1")
+				wesnoth.wml_actions.event {
+					name = "side " .. side.side .. " turn 1",
+					first_time_only = true,
+					T.lua { code = "mirrorfaction.leaders_mirror_show_warning()" }
+				}
+			end
 		end
 	end
 end
 
-
---function creepwars.leaders_mirror_show_warning()
---	wesnoth.wml_actions.message {
---		message = "Your Faction/Leader (side " .. wesnoth.current.side .. ") was replaced to allow fair game play.",
---		side_for = wesnoth.current.side,
---		speaker = "unit",
---	}
---end
---
-----local sorted_sides = table.sort(wesnoth.sides, function(a, b)
-----	return a.team_name ~= b.team_name and a.team_name < b.team_name
-----	or a.controller ~= b.controller and a.controller > b.controller -- "human" > "ai"
-----	or a.__cfg.chose_random > b.__cfg.chose_random
-----end)
---
---local side_choices = table.sort(wesnoth.sides, function(a, b)
---	return a.controller ~= b.controller and a.controller > b.controller -- "human" > "ai"
---		or a.__cfg.chose_random ~= b.__cfg.chose_random and a.__cfg.chose_random > b.__cfg.chose_random
---		or a.team_name ~= b.team_name and a.team_name < b.team_name
---end)
---
 --local function set_type(old_unit, type, is_downgrade)
 --	--print("changing side", old_unit.side, old_unit.type, "to", type)
 --	if is_downgrade == false
