@@ -1,0 +1,57 @@
+-- << mirror_analyze
+--
+--
+--local wesnoth = wesnoth
+--local ipairs = ipairs
+--local string = string
+--local helper = wesnoth.require("lua/helper.lua")
+--
+--
+--local function split_comma(str)
+--	local result = {}
+--	local n = 1
+--	for s in string.gmatch(str or "", "%s*[^,]+%s*") do
+--		if s ~= "" and s ~= "null" then
+--			result[n] = s
+--			n = n + 1
+--		end
+--	end
+--	return result
+--end
+--
+--local era_array = {}
+--local era_set = {}
+--
+--for multiplayer_side in helper.child_range(wesnoth.game_config.era, "multiplayer_side") do
+--	local units = multiplayer_side.recruit or multiplayer_side.leader or ""
+--	for _, unit in ipairs(split_comma(units)) do
+--		if era_set[unit] == nil and wesnoth.unit_types[unit] then
+--			-- print("importing era unit " .. unit)
+--			era_set[unit] = true
+--			era_array[#era_array + 1] = unit
+--		end
+--	end
+--end
+--
+--
+--local function can_be_a_leader(unit_type)
+--	return wesnoth.unit_types[unit_type].level <= 1
+--end
+--
+--
+--local era_unit_rand_string = "1.." .. #era_array
+--local function random_leader()
+--	while true do
+--		local candidate = era_array[helper.rand(era_unit_rand_string)]
+--		if can_be_a_leader(candidate) then
+--			return candidate
+--		end
+--	end
+--end
+--
+--
+--creepwars.can_be_a_leader = can_be_a_leader
+--creepwars.random_leader = random_leader
+--
+--
+-- >>

@@ -1,0 +1,5 @@
+title="Mirror Faction"
+email="n1m5spm@yandex.com"
+author="Vasya N"
+icon="misc/blank-hex.png~BLIT(icons/unit-groups/race_drake_30.png,5,6)~BLIT(icons/unit-groups/race_wose_30.png,9,36)~BLIT(icons/unit-groups/race_drake_30.png~FL(),40,6)~BLIT(icons/unit-groups/race_wose_30.png~FL(),36,36)"
+type="mod_mp"
