@@ -20,17 +20,17 @@ do
 		local team_id_array = team_array[team_id]
 		team_id_array[#team_id_array + 1] = side
 	end
-	for _, team_members in ipairs(team_array) do
-		mirrorfaction.array_sort_by_tuple(team_members, function(e)
-			return { not e.__cfg.allow_player, e.side }
-		end)
-	end
-	mirrorfaction.array_sort_by_tuple(team_array, function(e)
-		return { -#e, e[1].__cfg.chose_random, e[1].side }
-	end)
 	-- wesnoth.dofile("~add-ons/pick_advance/lua/json_format.lua")
 	-- print_as_json(team_array)
 end
+for _, team_members in ipairs(team_array) do
+	mirrorfaction.array_sort_by_tuple(team_members, function(e)
+		return { not e.__cfg.allow_player, e.side }
+	end)
+end
+mirrorfaction.array_sort_by_tuple(team_array, function(e)
+	return { -#e, e[1].__cfg.chose_random, e[1].side }
+end)
 
 
 function mirrorfaction.leaders_mirror_show_warning()

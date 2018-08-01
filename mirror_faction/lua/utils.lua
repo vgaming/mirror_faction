@@ -14,20 +14,23 @@ function mirrorfaction.stateless_iter(a, i)
 	end
 end
 
-
-function mirrorfaction.array_sort_by_tuple(arr, func) -- possible to introduce `func` caching
-	table.sort(arr, function(left_elem, right_elem)
-		local left_arr, right_arr = func(left_elem), func(right_elem)
-		for i = 1, #left_arr do
-			local left_prop, right_prop = left_arr[i], right_arr[i]
-			if left_prop ~= right_prop then
-				if type(left_prop) == "boolean" then
-					return not left_prop and right_prop
-				else
-					return left_prop < right_prop
-				end
+local function compare_array(arr_left, arr_right)
+	for i = 1, #arr_left do
+		local prop_left, prop_right = arr_left[i], arr_right[i]
+		if prop_left ~= prop_right then
+			if type(prop_left) == "boolean" then
+				return not prop_left and prop_right
+			else
+				return prop_left < prop_right
 			end
 		end
+	end
+end
+
+
+function mirrorfaction.array_sort_by_tuple(arr, func) -- possible to introduce `func` caching
+	table.sort(arr, function(elem_left, elem_right)
+		return compare_array(func(elem_left), func(elem_right))
 	end)
 end
 
