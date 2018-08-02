@@ -2,6 +2,5 @@ Same Random faction for all teams.
 
 Planned features:
 
-* Mirror faction, but not the leader. Could be preferable for Eras that have actual recruits (not Ageless RPG).
 * ''Shift'' factions/leaders. For example, if there are 6 players, order will be: A - c - B - a - C - b. This is how ''Creep Wars'' map currently works.
-* Prefer explicit user choice instead of random choice if it does not contradict mirroring (currently only partial support).
+* Prefer explicit user choice instead of random choice if it does not contradict mirroring (currently implemented only for first side in each team).

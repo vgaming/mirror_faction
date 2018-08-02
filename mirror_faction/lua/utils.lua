@@ -1,5 +1,6 @@
 -- << mirrorfaction_utils
 
+local wesnoth = wesnoth
 _G.mirrorfaction = {}
 local mirrorfaction = mirrorfaction
 local table = table
