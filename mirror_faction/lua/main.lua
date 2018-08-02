@@ -3,7 +3,6 @@
 local wesnoth = wesnoth
 local mirrorfaction = mirrorfaction
 local ipairs = ipairs
-local pairs = pairs
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 --wesnoth.dofile("~add-ons/mirror_faction/lua/main.lua")
@@ -39,23 +38,6 @@ function mirrorfaction.leaders_mirror_show_warning()
 		side_for = wesnoth.current.side,
 	}
 end
-
-local function unit_wml_copy(old_id, new_id, overrides)
-	wesnoth.wml_actions.store_unit {
-		T.filter { id = old_id },
-		variable = "temp_unit",
-	}
-	local unit_var = wesnoth.get_variable("temp_unit")
-	unit_var.id = new_id
-	unit_var.underlying_id = new_id
-	for k, v in pairs(overrides) do unit_var[k] = v end
-	wesnoth.set_variable("temp_unit", unit_var)
-	wesnoth.wml_actions.unstore_unit {
-		variable = "temp_unit",
-	}
-	wesnoth.set_variable("temp_unit", nil)
-end
-
 
 local function set_unit_type(old_unit, type)
 	--print("changing side", old_unit.side, old_unit.type, "to", type)
