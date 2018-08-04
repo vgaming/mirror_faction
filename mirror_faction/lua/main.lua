@@ -7,20 +7,16 @@ local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
 --wesnoth.dofile("~add-ons/mirror_faction/lua/main.lua")
 
---local side_to_team = {}
 local team_array = {}
 do
 	local team_name_to_id = {}
 	for _, side in ipairs(wesnoth.sides) do
 		local team_id = team_name_to_id[side.team_name] or #team_array + 1
 		team_name_to_id[side.team_name] = team_id
-		-- side_to_team[side.side] = team_id
 		team_array[team_id] = team_array[team_id] or {}
 		local team_id_array = team_array[team_id]
 		team_id_array[#team_id_array + 1] = side
 	end
-	-- wesnoth.dofile("~add-ons/pick_advance/lua/json_format.lua")
-	-- print_as_json(team_array)
 end
 for _, team_members in ipairs(team_array) do
 	mirrorfaction.array_sort_by_tuple(team_members, function(e)
@@ -65,12 +61,16 @@ local function set_unit_type(old_unit, type)
 	wesnoth.put_unit(new_unit)
 end
 
-local function random_leader_type(faction_id)
+local function random_leader_type(faction_id, exclude)
 	local faction = mirrorfaction.faction_map[faction_id]
-	local leaders = mirrorfaction.split_comma_units(faction.random_leader or faction.leader)
-	return leaders[wesnoth.random(#leaders)]
+	local leaders_all = mirrorfaction.split_comma_units(faction.random_leader or faction.leader)
+	local leaders_filtered = mirrorfaction.array_filter(leaders_all, function(e) return not exclude[e] end)
+	print_as_json("all", leaders_all, "filtered", leaders_filtered, "exclude", exclude)
+	return #leaders_filtered > 0 and leaders_filtered[wesnoth.random(#leaders_filtered)]
+		or leaders_all[wesnoth.random(#leaders_all)]
 end
 
+local exclude_set = {}
 for team_index, team_members in mirrorfaction.stateless_iter, team_array, 0 do
 	for member_index, side in ipairs(team_members) do
 		local rolemodel_side = team_array[1][member_index]
@@ -79,7 +79,9 @@ for team_index, team_members in mirrorfaction.stateless_iter, team_array, 0 do
 		side.recruit = rolemodel_side.recruit
 		if (rolemodel_leader) then
 			for _, old_leader in ipairs(wesnoth.get_units { side = side.side, canrecruit = true }) do
-				local new_type = (team_index == 1) and rolemodel_leader.type or random_leader_type(rolemodel_side.faction)
+				local new_type = (team_index == 1) and rolemodel_leader.type
+					or random_leader_type(rolemodel_side.faction, exclude_set)
+				exclude_set[new_type] = true
 				set_unit_type(old_leader, new_type)
 			end
 		end

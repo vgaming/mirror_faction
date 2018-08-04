@@ -2,9 +2,9 @@
 
 _G.mirrorfaction = {}
 local mirrorfaction = mirrorfaction
+local ipairs = ipairs
 local table = table
 local type = type
-
 
 function mirrorfaction.stateless_iter(a, i)
 	i = i + 1
@@ -13,6 +13,15 @@ function mirrorfaction.stateless_iter(a, i)
 		return i, v
 	end
 end
+
+function mirrorfaction.array_filter(arr, func)
+	local result = {}
+	for _, elem in ipairs(arr) do
+		if func(elem) then result[#result + 1] = elem end
+	end
+	return result
+end
+
 
 local function compare_array(arr_left, arr_right)
 	for i = 1, #arr_left do
