@@ -65,7 +65,7 @@ local function random_leader_type(faction_id, exclude)
 	local faction = mirrorfaction.faction_map[faction_id]
 	local leaders_all = mirrorfaction.split_comma_units(faction.random_leader or faction.leader)
 	local leaders_filtered = mirrorfaction.array_filter(leaders_all, function(e) return not exclude[e] end)
-	print_as_json("all", leaders_all, "filtered", leaders_filtered, "exclude", exclude)
+	-- print_as_json("all", leaders_all, "filtered", leaders_filtered, "exclude", exclude)
 	return #leaders_filtered > 0 and leaders_filtered[wesnoth.random(#leaders_filtered)]
 		or leaders_all[wesnoth.random(#leaders_all)]
 end
