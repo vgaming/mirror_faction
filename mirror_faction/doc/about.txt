@@ -2,8 +2,8 @@ Same Faction (but different Leader) for all teams.
 
 * Works fast on huge Eras (e.g. Ageless)
 
-* Manual choice is preferred over random (if one side made them).
+* Manual choice is preferred over random.
 
 * Works on maps with AI players (mirroring human sides takes preference)
 
-* Works with multiple sides on each team (only corresponding sides will be mirrored then!)
+* Works with multiple sides on each team
