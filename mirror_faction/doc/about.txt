@@ -1,4 +1,4 @@
-Same Faction (but different Leader) for all teams.
+Same faction for all teams. (But different Leader.)
 
 * Works fast on huge Eras (e.g. Ageless)
 
