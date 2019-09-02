@@ -1,7 +1,7 @@
 -- << mirror_main
 
 local wesnoth = wesnoth
-local mirrorfaction = mirrorfaction
+local addon = mirrorfaction
 local ipairs = ipairs
 local T = wesnoth.require("lua/helper.lua").set_wml_tag_metatable {}
 
@@ -19,16 +19,16 @@ do
 	end
 end
 for _, team_members in ipairs(team_array) do
-	mirrorfaction.array_sort_by_tuple(team_members, function(e)
+	addon.array_sort_by_tuple(team_members, function(e)
 		return { not e.__cfg.allow_player, e.side }
 	end)
 end
-mirrorfaction.array_sort_by_tuple(team_array, function(e)
+addon.array_sort_by_tuple(team_array, function(e)
 	return { -#e, e[1].__cfg.chose_random, e[1].side }
 end)
 
 
-function mirrorfaction.leaders_mirror_show_warning()
+function addon.leaders_mirror_show_warning()
 	wesnoth.wml_actions.message {
 		message = "Your Faction/Leader (side " .. wesnoth.current.side .. ") was replaced to allow fair game play.",
 		side_for = wesnoth.current.side,
@@ -62,16 +62,16 @@ local function set_unit_type(old_unit, type)
 end
 
 local function random_leader_type(faction_id, exclude)
-	local faction = mirrorfaction.faction_map[faction_id]
-	local leaders_all = mirrorfaction.split_comma_units(faction.random_leader or faction.leader)
-	local leaders_filtered = mirrorfaction.array_filter(leaders_all, function(e) return not exclude[e] end)
+	local faction = addon.faction_map[faction_id]
+	local leaders_all = addon.split_comma_units(faction.random_leader or faction.leader)
+	local leaders_filtered = addon.array_filter(leaders_all, function(e) return not exclude[e] end)
 	-- print_as_json("all", leaders_all, "filtered", leaders_filtered, "exclude", exclude)
 	return #leaders_filtered > 0 and leaders_filtered[wesnoth.random(#leaders_filtered)]
 		or leaders_all[wesnoth.random(#leaders_all)]
 end
 
 local exclude_set = {}
-for team_index, team_members in mirrorfaction.stateless_iter, team_array, 0 do
+for team_index, team_members in addon.stateless_iter, team_array, 0 do
 	for member_index, side in ipairs(team_members) do
 		local rolemodel_side = team_array[1][member_index]
 		local rolemodel_leader = wesnoth.get_units { side = rolemodel_side.side, canrecruit = true }[1]
